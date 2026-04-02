@@ -197,10 +197,44 @@ read_all_terms(Stream, [Term|Rest]) :-
     read(Stream, Term),
     read_all_terms(Stream, Rest).
 
+/* 
+=========================================================
+   EXTRACTION DES DONNÉES DU GRAPHE
+=========================================================
+*/
+
+/*
+------------------------------------------------------------
+declared_node(+X)
+
+Vrai si X est un sommet déclaré dans les données du problème.
+
+Un sommet peut être déclaré :
+- comme sommet ordinaire via node(X) ;
+- comme source via source(X) ;
+- comme puits via sink(X).
+
+Ce prédicat permet d’unifier la récupération des sommets du graphe,
+quelle que soit leur nature.
+*/
 declared_node(X) :- node(X).
 declared_node(X) :- source(X).
 declared_node(X) :- sink(X).
 
+
+/*
+------------------------------------------------------------
+graph_data(-Edges, -Nodes, -Source, -Sink)
+
+Extrait depuis la base de faits l’ensemble des données utiles à la
+résolution du problème de flot maximum.
+
+Paramètres :
+-Edges : liste des arêtes du graphe sous la forme edge(X,Y,C)
+-Nodes : liste des sommets déclarés dans le graphe
+-Source : sommet source du réseau de flot
+-Sink : sommet puits du réseau de flot
+*/
 graph_data(Edges, Nodes, Source, Sink) :-
     findall(edge(X,Y,C), edge(X,Y,C), Edges),
     findall(X, declared_node(X), Nodes),
